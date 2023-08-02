@@ -40,7 +40,7 @@ type Config = {
 };
 
 function isSecretPayload(data: Uint8Array | string | null | undefined): data is Uint8Array {
-  return data !== null;
+  return !!data;
 }
 
 function isConfig(config: Config | string): config is Config {
@@ -100,7 +100,7 @@ async function iterateSecrets(
  */
 const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
   const { projectName, filter, mapping, version = "latest", nextConfig = {} } = options;
-  const googleSecretConfigs = {};
+  const newNextConfig = { ...nextConfig };
   const secretmanagerClient = new SecretManagerServiceClient();
 
   const iterable = await secretmanagerClient.listSecrets({ parent: projectName, filter: typeof filter === "string" ? filter : undefined });
@@ -114,12 +114,12 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
 
     if (isSecretPayload(value[0]?.payload?.data)) {
       for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {
-        setConfigurationValue(googleSecretConfigs, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
+        setConfigurationValue(newNextConfig, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
       }
     }
   });
 
-  return Object.assign({}, nextConfig, googleSecretConfigs);
+  return newNextConfig;
 };
 
 export { withGoogleSecrets };
