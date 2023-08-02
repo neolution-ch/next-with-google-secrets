@@ -28,7 +28,7 @@ beforeAll(() => {
 
 describe("WithGoogleSecrets", () => {
   it("load google secrets", async () => {
-    var newConfig = await withGoogleSecrets({
+    const newConfig = await withGoogleSecrets({
       projectName: "testProject",
       filter: "testFilter",
       version: "testVersion",
