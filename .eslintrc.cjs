@@ -33,7 +33,7 @@ module.exports = {
       },
     },
   },
-  ignorePatterns: ["dist", "cypress"],
+  ignorePatterns: ["dist"],
   globals: {},
   rules: {
     // Enforce double quotes
