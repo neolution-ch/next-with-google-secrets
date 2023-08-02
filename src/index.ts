@@ -1,7 +1,7 @@
 import { SecretManagerServiceClient, protos } from "@google-cloud/secret-manager";
 
 /**
- * Definition of filter function
+ * Filter function to filter secrets by name that dont have to be loaded
  */
 type FilterFunction = (name: string) => boolean;
 
@@ -10,70 +10,49 @@ type FilterFunction = (name: string) => boolean;
  */
 type WithGoogleSecretsOptions = {
   /**
-   *
+   * The project name in google could to load the secrets from
    */
   projectName: string;
+
   /**
-   *
+   * A mapping to define which secret should overwritte which config entry (secretName, configEntry(ies))
    */
   mapping: Record<string, string | string[]>;
+
   /**
-   *
+   * The filter to either filter directly by labels (string) or by a function
    */
   filter?: string | FilterFunction;
+
   /**
-   *
+   * The version of secret that should be taken, default is latest
    */
   version?: string;
+
   /**
-   *
+   * The current next config that will be extended
    */
   nextConfig: object;
 };
 
-/**
- * Definition of the config
- */
 type Config = {
   [key: string]: string | Config;
 };
 
-/**
- * Checks if the data is a secret payload
- * @param data the possible secret payload
- * @returns True if it is a secret payload
- */
 function isSecretPayload(data: Uint8Array | string | null | undefined): data is Uint8Array {
   return data !== null;
 }
 
-/**
- * Checks if object is config
- * @param config the possible config object
- * @returns True if it is a config object
- */
 function isConfig(config: Config | string): config is Config {
   return config !== null;
 }
 
-/**
- * Gets the short name of a secret from the long name
- * @param name The long name
- * @returns The short name
- */
 function getSecretName(name: string | undefined | null): string {
   if (!name || !name?.length) return "";
   const splits = name.split("/");
   return splits[splits.length - 1];
 }
 
-/**
- * Sets a specific config value based on the path
- * @param config The config object
- * @param path The path
- * @param value The value to set
- * @param subPath The sub path
- */
 function setConfigurationValue(config: Config, path: string, value: string, subPath?: string): void {
   const pathSplit = (subPath ?? path).split(/\.|__/);
   const [currentName] = pathSplit;
@@ -82,13 +61,13 @@ function setConfigurationValue(config: Config, path: string, value: string, subP
     if (isConfig(config[currentName])) {
       setConfigurationValue(config[currentName] as Config, path, value, pathSplit.filter((_, i) => i > 0).join("."));
     } else {
-      console.warn("couldn't override following config:", path);
+      console.warn("WithGoogleSecrets - couldn't override following config:", path);
     }
   } else if (pathSplit.length == 1) {
     config[currentName] = value;
-    console.log("overritten config with gcp secret:", path);
+    console.log("WithGoogleSecrets - overritten config with gcp secret:", path);
   } else {
-    console.warn("couldn't override following config:", path);
+    console.warn("WithGoogleSecrets - couldn't override following config:", path);
   }
 }
 
@@ -119,53 +98,19 @@ async function iterateSecrets(
  * @param options The options
  * @returns The updated next config
  */
-module.exports = async (options: WithGoogleSecretsOptions) => {
-  const {
-    /**
-     * The gcp project name
-     */
-    projectName,
-    /**
-     * The filter (either string for gcp label or function)
-     */
-    filter,
-    /**
-     * The mapping from secret to config path (with __ or .)
-     */
-    mapping,
-    /**
-     * The google secret version (default "latest")
-     */
-    version = "latest",
-    /**
-     * The next config
-     */
-    nextConfig = {},
-  } = options;
+const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
+  const { projectName, filter, mapping, version = "latest", nextConfig = {} } = options;
   const googleSecretConfigs = {};
   const secretmanagerClient = new SecretManagerServiceClient();
 
-  const iterable = await secretmanagerClient.listSecrets({
-    /**
-     * The project name in gcp
-     */
-    parent: projectName,
-    /**
-     * If filter is a string, pass it to gcp
-     */ filter: typeof filter === "string" ? filter : undefined,
-  });
+  const iterable = await secretmanagerClient.listSecrets({ parent: projectName, filter: typeof filter === "string" ? filter : undefined });
 
   await iterateSecrets(iterable, async (_, name) => {
     const secretName = getSecretName(name);
     const secretMappings = mapping[secretName];
     if (secretMappings == undefined || (typeof filter === "function" && !filter(secretName))) return;
 
-    const value = await secretmanagerClient.accessSecretVersion({
-      /**
-       * The combined version string
-       */
-      name: `${name}/versions/${version}`,
-    });
+    const value = await secretmanagerClient.accessSecretVersion({ name: `${name}/versions/${version}` });
 
     if (isSecretPayload(value[0]?.payload?.data)) {
       for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {
@@ -176,3 +121,5 @@ module.exports = async (options: WithGoogleSecretsOptions) => {
 
   return Object.assign({}, nextConfig, googleSecretConfigs);
 };
+
+export { withGoogleSecrets };

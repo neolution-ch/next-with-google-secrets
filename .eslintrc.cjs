@@ -65,14 +65,14 @@ module.exports = {
     "jsdoc/require-jsdoc": [
       "warn",
       {
-        publicOnly: false,
+        publicOnly: true,
         require: {
           ArrowFunctionExpression: true,
           ClassDeclaration: true,
           ClassExpression: true,
           FunctionDeclaration: true,
           FunctionExpression: true,
-          MethodDefinition: false,
+          MethodDefinition: true,
         },
         contexts: [
           "ArrowFunctionExpression",

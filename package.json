@@ -1,7 +1,7 @@
 {
   "name": "@neolution-ch/next-with-google-secrets",
   "version": "0.0.0",
-  "description": "todo @drebrez",
+  "description": "overrides mapped config-keys with the value from gcp secrets ",
   "homepage": "https://neolution-ch.github.io/next-with-google-secrets",
   "repository": {
     "type": "git",
