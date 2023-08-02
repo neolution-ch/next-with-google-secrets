@@ -32,7 +32,7 @@ export default [
     output: {
       file: "dist/index.js",
       format: "cjs",
-      name: "JavaScriptUtilities",
+      name: "NextWithGoogleSecrets",
       sourcemap: true,
       exports: "named",
       sourcemap: true,
@@ -45,7 +45,7 @@ export default [
     output: {
       file: "dist/index.modern.js",
       format: "esm",
-      name: "JavaScriptUtilities",
+      name: "NextWithGoogleSecrets",
       sourcemap: true,
       exports: "named",
       sourcemap: true,
@@ -57,7 +57,7 @@ export default [
     output: {
       file: "dist/index.umd.js",
       format: "umd",
-      name: "JavaScriptUtilities",
+      name: "NextWithGoogleSecrets",
       sourcemap: true,
       exports: "named",
       sourcemap: true,
