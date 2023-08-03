@@ -30,14 +30,19 @@ type WithGoogleSecretsOptions = {
   mapping: Record<string, string | string[]>;
 
   /**
-   * The filter to either filter directly by labels (string) or by a function
+   * The filter to filter directly by labels in gcp
    */
-  filter?: string | FilterFunction;
+  filter?: string;
 
   /**
-   * The version of secret that should be taken, default is latest
+   * The filter function that gets called for every sercret before loading
    */
-  version?: string;
+  filterFn?: FilterFunction;
+
+  /**
+   * The version for every secret that should be taken, default is latest
+   */
+  versions?: Record<string, string>;
 
   /**
    * The current next config that will be extended
@@ -109,18 +114,18 @@ async function iterateSecrets(
  * @returns The updated next config
  */
 const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
-  const { projectName, filter, mapping, version = "latest", nextConfig = {} } = options;
+  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {} } = options;
   const newNextConfig = { ...nextConfig };
   const secretmanagerClient = new SecretManagerServiceClient();
 
   const iterable = await secretmanagerClient.listSecrets({ parent: projectName, filter: typeof filter === "string" ? filter : undefined });
 
-  await iterateSecrets(iterable, async (_, name) => {
+  await iterateSecrets(iterable, async (secret, name) => {
     const secretName = getSecretName(name);
     const secretMappings = mapping[secretName];
-    if (secretMappings == undefined || (typeof filter === "function" && !filter(secretName))) return;
+    if (secretMappings == undefined || (filterFn && !filterFn({ name: secretName, secret }))) return;
 
-    const value = await secretmanagerClient.accessSecretVersion({ name: `${name}/versions/${version}` });
+    const value = await secretmanagerClient.accessSecretVersion({ name: `${name}/versions/${versions[secretName] ?? "latest"}` });
 
     if (isSecretPayload(value[0]?.payload?.data)) {
       for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {

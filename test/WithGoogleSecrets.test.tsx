@@ -18,7 +18,7 @@ beforeAll(() => {
     switch (name) {
       case "testProject/1111/abc/1234/test1/versions/testVersion":
         return [{ payload: { data: new TextEncoder().encode("test1Value") } }];
-      case "testProject/1111/def/5678/test2/versions/testVersion":
+      case "testProject/1111/def/5678/test2/versions/latest":
         return [{ payload: { data: new TextEncoder().encode("test2Value") } }];
       default:
         return [];
@@ -31,7 +31,7 @@ describe("WithGoogleSecrets", () => {
     const newConfig = await withGoogleSecrets({
       projectName: "testProject",
       filter: "testFilter",
-      version: "testVersion",
+      versions: { test1: "testVersion" },
       mapping: {
         test1: "serverRuntimeConfig__testOverwritten1",
         test2: ["serverRuntimeConfig.testOverwritten2", "serverRuntimeConfig__testOverwritten3"],
