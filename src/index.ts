@@ -3,7 +3,17 @@ import { SecretManagerServiceClient, protos } from "@google-cloud/secret-manager
 /**
  * Filter function to filter secrets by name that dont have to be loaded
  */
-type FilterFunction = (name: string) => boolean;
+type FilterFunction = (params: {
+  /**
+   * The name of the secret (without the path)
+   */
+  name: string;
+
+  /**
+   * The secret itself
+   */
+  secret: protos.google.cloud.secretmanager.v1.ISecret;
+}) => boolean;
 
 /**
  * Definition of possible options for the module
