@@ -30,12 +30,12 @@ type WithGoogleSecretsOptions = {
   mapping: Record<string, string | string[]>;
 
   /**
-   * The filter to filter directly by labels in gcp
+   * A server side filter forwarded to the google api according to <https://cloud.google.com/secret-manager/docs/filtering>
    */
   filter?: string;
 
   /**
-   * The filter function that gets called for every sercret before loading
+   * The filter function that gets called for every sercret before loading the value, this filter is used by the application and not by google directly, so the secrets are still loaded, just not their values.
    */
   filterFn?: FilterFunction;
 
