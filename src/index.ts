@@ -30,7 +30,7 @@ type WithGoogleSecretsOptions = {
   mapping: Record<string, string | string[]>;
 
   /**
-   * A server side filter forwarded to the google api according to <https://cloud.google.com/secret-manager/docs/filtering>
+   * A server side filter forwarded to the google api according to https://cloud.google.com/secret-manager/docs/filtering
    */
   filter?: string;
 
