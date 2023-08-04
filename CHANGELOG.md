@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- added new parameter `enabled` to determ if google secrets should be loaded or not
+
 ## [0.0.1] - 2023-08-03
 
 ### Added
