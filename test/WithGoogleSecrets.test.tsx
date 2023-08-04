@@ -3,7 +3,7 @@ import { SecretManagerServiceClient, protos } from "@google-cloud/secret-manager
 
 beforeAll(() => {
   jest.spyOn(SecretManagerServiceClient.prototype, "listSecrets").mockImplementation(({ parent, filter }) => {
-    if (parent !== "testProject" || filter !== "testFilter") return [];
+    if (parent !== "projects/testProject" || filter !== "testFilter") return [];
     const fakeSecrets: Array<protos.google.cloud.secretmanager.v1.ISecret> = [
       {
         name: "testProject/1111/abc/1234/test1",

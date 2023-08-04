@@ -117,8 +117,9 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
   const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {} } = options;
   const newNextConfig = { ...nextConfig };
   const secretmanagerClient = new SecretManagerServiceClient();
+  const projectPath = projectName.startsWith("projects/") ? projectName : `projects/${projectName}`;
 
-  const iterable = await secretmanagerClient.listSecrets({ parent: projectName, filter: typeof filter === "string" ? filter : undefined });
+  const iterable = await secretmanagerClient.listSecrets({ parent: projectPath, filter: typeof filter === "string" ? filter : undefined });
 
   await iterateSecrets(iterable, async (secret, name) => {
     const secretName = getSecretName(name);
