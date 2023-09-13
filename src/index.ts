@@ -1,4 +1,5 @@
 import { SecretManagerServiceClient, protos } from "@google-cloud/secret-manager";
+import type { NextConfig } from "next";
 
 /**
  * Filter function to filter secrets by name that dont have to be loaded
@@ -47,7 +48,7 @@ type WithGoogleSecretsOptions = {
   /**
    * The current next config that will be extended
    */
-  nextConfig: object;
+  nextConfig: NextConfig;
 };
 
 type Config = {
