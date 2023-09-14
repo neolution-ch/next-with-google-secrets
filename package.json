@@ -38,7 +38,8 @@
     "prettier-write": "prettier --write .",
     "start": "rollup -c -w",
     "start-all": "concurrently \"yarn start\" \"yarn start-yalc\"",
-    "start-yalc": "yarn nodemon --watch dist -x \"yarn yalc push\""
+    "start-yalc": "yarn nodemon --watch dist -x \"yarn yalc push\"",
+    "test": "cross-env DEBUG_PRINT_LIMIT=100 jest"
   },
   "dependencies": {
     "@google-cloud/secret-manager": "^4.2.2"
