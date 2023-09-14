@@ -27,6 +27,32 @@ beforeAll(() => {
 });
 
 describe("WithGoogleSecrets", () => {
+  it("not load google secrets", async () => {
+    const listSecrets = jest.spyOn(SecretManagerServiceClient.prototype, "listSecrets");
+    const config = {
+      serverRuntimeConfig: {
+        testOverwritten1: "testOverwritten1",
+        testOverwritten2: "testOverwritten2",
+        testOverwritten3: "testOverwritten3",
+        testNotOverwritten1: "testNotOverwritten1",
+      },
+      testNotOverwritten2: "testNotOverwritten2",
+    };
+    const newConfig = await withGoogleSecrets({
+      projectName: "testProject",
+      filter: "testFilter",
+      versions: { test1: "testVersion" },
+      enabled: false,
+      mapping: {
+        test1: "serverRuntimeConfig__testOverwritten1",
+        test2: ["serverRuntimeConfig.testOverwritten2", "serverRuntimeConfig__testOverwritten3"],
+      },
+      nextConfig: config,
+    });
+    expect(newConfig).toStrictEqual(config);
+    expect(listSecrets).toHaveBeenCalledTimes(0);
+  });
+
   it("load google secrets", async () => {
     const newConfig = await withGoogleSecrets({
       projectName: "testProject",

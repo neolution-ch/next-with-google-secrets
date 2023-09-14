@@ -49,6 +49,11 @@ type WithGoogleSecretsOptions = {
    * The current next config that will be extended
    */
   nextConfig: NextConfig;
+
+  /**
+   * Determs if the google secrets should be loaded or not (default = true)
+   */
+  enabled?: boolean;
 };
 
 type Config = {
@@ -115,7 +120,12 @@ async function iterateSecrets(
  * @returns The updated next config
  */
 const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
-  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {} } = options;
+  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {}, enabled = true } = options;
+
+  if (!enabled) {
+    return nextConfig;
+  }
+
   const newNextConfig = { ...nextConfig };
   const secretmanagerClient = new SecretManagerServiceClient();
 
