@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2023-09-14
+
 ### Fixed
 
 - changed location of index.d.ts file
@@ -26,5 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - added project setup
 
-[unreleased]: https://github.com/neolution-ch/next-with-google-secrets/compare/0.0.1...HEAD
+[unreleased]: https://github.com/neolution-ch/next-with-google-secrets/compare/0.1.0...HEAD
+[0.1.0]: https://github.com/neolution-ch/next-with-google-secrets/compare/0.0.1...0.1.0
 [0.0.1]: https://github.com/neolution-ch/next-with-google-secrets/releases/tag/0.0.1
