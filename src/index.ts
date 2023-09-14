@@ -1,4 +1,5 @@
 import { SecretManagerServiceClient, protos } from "@google-cloud/secret-manager";
+import type { NextConfig } from "next";
 
 /**
  * Filter function to filter secrets by name that dont have to be loaded
@@ -47,7 +48,12 @@ type WithGoogleSecretsOptions = {
   /**
    * The current next config that will be extended
    */
-  nextConfig: object;
+  nextConfig: NextConfig;
+
+  /**
+   * Determs if the google secrets should be loaded or not (default = true)
+   */
+  enabled?: boolean;
 };
 
 type Config = {
@@ -114,7 +120,12 @@ async function iterateSecrets(
  * @returns The updated next config
  */
 const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
-  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {} } = options;
+  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {}, enabled = true } = options;
+
+  if (!enabled) {
+    return nextConfig;
+  }
+
   const newNextConfig = { ...nextConfig };
   const secretmanagerClient = new SecretManagerServiceClient();
   const projectPath = projectName.startsWith("projects/") ? projectName : `projects/${projectName}`;
