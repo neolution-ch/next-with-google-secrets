@@ -15,8 +15,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "rootDir": "src"
-  },
-  "include": ["src", "../test"]
+    "baseUrl": "."
+  }
 }
