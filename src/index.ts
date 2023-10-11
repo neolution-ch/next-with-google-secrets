@@ -54,6 +54,11 @@ type WithGoogleSecretsOptions = {
    * Determs if the google secrets should be loaded or not (default = true)
    */
   enabled?: boolean;
+
+  /**
+   * Determs if the application should continue on error or throw an exception (default = false)
+   */
+  continueOnError?: boolean;
 };
 
 type Config = {
@@ -120,31 +125,42 @@ async function iterateSecrets(
  * @returns The updated next config
  */
 const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
-  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {}, enabled = true } = options;
+  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {}, enabled = true, continueOnError = false } = options;
 
   if (!enabled) {
     return nextConfig;
   }
 
   const newNextConfig = { ...nextConfig };
-  const secretmanagerClient = new SecretManagerServiceClient();
-  const projectPath = projectName.startsWith("projects/") ? projectName : `projects/${projectName}`;
+  try {
+    const secretmanagerClient = new SecretManagerServiceClient();
+    const projectPath = projectName.startsWith("projects/") ? projectName : `projects/${projectName}`;
 
-  const iterable = await secretmanagerClient.listSecrets({ parent: projectPath, filter: typeof filter === "string" ? filter : undefined });
+    const iterable = await secretmanagerClient.listSecrets({
+      parent: projectPath,
+      filter: typeof filter === "string" ? filter : undefined,
+    });
 
-  await iterateSecrets(iterable, async (secret, name) => {
-    const secretName = getSecretName(name);
-    const secretMappings = mapping[secretName];
-    if (secretMappings == undefined || (filterFn && !filterFn({ name: secretName, secret }))) return;
+    await iterateSecrets(iterable, async (secret, name) => {
+      const secretName = getSecretName(name);
+      const secretMappings = mapping[secretName];
+      if (secretMappings == undefined || (filterFn && !filterFn({ name: secretName, secret }))) return;
 
-    const value = await secretmanagerClient.accessSecretVersion({ name: `${name}/versions/${versions[secretName] ?? "latest"}` });
+      const value = await secretmanagerClient.accessSecretVersion({ name: `${name}/versions/${versions[secretName] ?? "latest"}` });
 
-    if (isSecretPayload(value[0]?.payload?.data)) {
-      for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {
-        setConfigurationValue(newNextConfig, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
+      if (isSecretPayload(value[0]?.payload?.data)) {
+        for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {
+          setConfigurationValue(newNextConfig, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
+        }
       }
+    });
+  } catch (ex) {
+    if (!continueOnError) {
+      throw ex;
+    } else {
+      console.error("WithGoogleSecrets - error loading secrets:", ex);
     }
-  });
+  }
 
   return newNextConfig;
 };
