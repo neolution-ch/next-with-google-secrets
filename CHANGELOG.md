@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-10-16
+
 ### Added
 
 - added new parameter `continueOnError` to determ if the application should continue on error or throw an exception (default = false)
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - added project setup
 
-[unreleased]: https://github.com/neolution-ch/next-with-google-secrets/compare/0.1.0...HEAD
+[unreleased]: https://github.com/neolution-ch/next-with-google-secrets/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/neolution-ch/next-with-google-secrets/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/neolution-ch/next-with-google-secrets/compare/0.0.1...0.1.0
 [0.0.1]: https://github.com/neolution-ch/next-with-google-secrets/releases/tag/0.0.1
