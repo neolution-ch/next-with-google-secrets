@@ -59,6 +59,12 @@ type WithGoogleSecretsOptions = {
    * Determs if the application should continue on error or throw an exception (default = false)
    */
   continueOnError?: boolean;
+
+  /**
+   * The function that will be called after the secrets are loaded.
+   * The config is passed as parameter.
+   */
+  onDone?: (config: NextConfig) => void | Promise<void>;
 };
 
 type Config = {
@@ -125,7 +131,17 @@ async function iterateSecrets(
  * @returns The updated next config
  */
 const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
-  const { projectName, filter, filterFn, mapping, versions = {}, nextConfig = {}, enabled = true, continueOnError = false } = options;
+  const {
+    projectName,
+    filter,
+    filterFn,
+    mapping,
+    versions = {},
+    nextConfig = {},
+    enabled = true,
+    continueOnError = false,
+    onDone,
+  } = options;
 
   if (!enabled) {
     return nextConfig;
@@ -154,6 +170,10 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
         }
       }
     });
+
+    if (onDone) {
+      await onDone(newNextConfig);
+    }
   } catch (ex) {
     if (!continueOnError) {
       throw ex;

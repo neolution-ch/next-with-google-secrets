@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- added `onDone` callback to be called with the new next config after the secrets are loaded
+
 ## [0.2.0] - 2023-10-16
 
 ### Added
