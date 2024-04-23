@@ -11,6 +11,7 @@
   "author": "Neolution",
   "sideEffects": false,
   "exports": {
+    "./dist/*": "./dist/*",
     "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
