@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### dependabot: \#18 Bump tj-actions/changed-files from 41 to 45
+
 ### dependabot: \#15 Bump micromatch from 4.0.5 to 4.0.8
 
 ### dependabot: \#16 Bump next from 13.4.12 to 14.1.1
