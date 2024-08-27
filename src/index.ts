@@ -1,123 +1,10 @@
-import { SecretManagerServiceClient, protos } from "@google-cloud/secret-manager";
-import type { NextConfig } from "next";
-
-/**
- * Filter function to filter secrets by name that dont have to be loaded
- */
-type FilterFunction = (params: {
-  /**
-   * The name of the secret (without the path)
-   */
-  name: string;
-
-  /**
-   * The secret itself
-   */
-  secret: protos.google.cloud.secretmanager.v1.ISecret;
-}) => boolean;
-
-/**
- * Definition of possible options for the module
- */
-type WithGoogleSecretsOptions = {
-  /**
-   * The project name in google could to load the secrets from
-   */
-  projectName: string;
-
-  /**
-   * A mapping to define which secret should overwritte which config entry (secretName, configEntry(ies))
-   */
-  mapping: Record<string, string | string[]>;
-
-  /**
-   * A server side filter forwarded to the google api according to https://cloud.google.com/secret-manager/docs/filtering
-   */
-  filter?: string;
-
-  /**
-   * The filter function that gets called for every sercret before loading the value, this filter is used by the application and not by google directly, so the secrets are still loaded, just not their values.
-   */
-  filterFn?: FilterFunction;
-
-  /**
-   * The version for every secret that should be taken, default is latest
-   */
-  versions?: Record<string, string>;
-
-  /**
-   * The current next config that will be extended
-   */
-  nextConfig: NextConfig;
-
-  /**
-   * Determs if the google secrets should be loaded or not (default = true)
-   */
-  enabled?: boolean;
-
-  /**
-   * Determs if the application should continue on error or throw an exception (default = false)
-   */
-  continueOnError?: boolean;
-};
-
-type Config = {
-  [key: string]: string | Config;
-};
-
-function isSecretPayload(data: Uint8Array | string | null | undefined): data is Uint8Array {
-  return !!data;
-}
-
-function isConfig(config: Config | string): config is Config {
-  return config !== null;
-}
-
-function getSecretName(name: string | undefined | null): string {
-  if (!name || !name?.length) return "";
-  const splits = name.split("/");
-  return splits[splits.length - 1];
-}
-
-function setConfigurationValue(config: Config, path: string, value: string, subPath?: string): void {
-  const pathSplit = (subPath ?? path).split(/\.|__/);
-  const [currentName] = pathSplit;
-  if (pathSplit.length > 1) {
-    if (typeof config[currentName] !== "object") config[currentName] = {};
-    if (isConfig(config[currentName])) {
-      setConfigurationValue(config[currentName] as Config, path, value, pathSplit.filter((_, i) => i > 0).join("."));
-    } else {
-      console.warn("WithGoogleSecrets - couldn't override following config:", path);
-    }
-  } else if (pathSplit.length == 1) {
-    config[currentName] = value;
-    console.log("WithGoogleSecrets - overritten config with gcp secret:", path);
-  } else {
-    console.warn("WithGoogleSecrets - couldn't override following config:", path);
-  }
-}
-
-/**
- * Iterates through the secrets
- * @param secrets The iterable secrets
- * @param action The action that will be performed for every secret
- */
-async function iterateSecrets(
-  secrets: [
-    protos.google.cloud.secretmanager.v1.ISecret[],
-    protos.google.cloud.secretmanager.v1.IListSecretsRequest | null,
-    protos.google.cloud.secretmanager.v1.IListSecretsResponse,
-  ],
-  action: (secret: protos.google.cloud.secretmanager.v1.ISecret, name: string) => Promise<void>,
-) {
-  for await (const response of secrets) {
-    if (response == null || !Array.isArray(response)) continue;
-    for await (const secret of response) {
-      if (!secret || !secret.name) continue;
-      await action(secret, secret.name);
-    }
-  }
-}
+import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
+import { setConfigurationValue } from "./utils/setConfigurationValue";
+import { isSecretPayload } from "./utils/isSecretPayload";
+import { getSecretName } from "./utils/getSecretName";
+import { getGoogleSecretSyntaxKeyValues } from "./utils/getGoogleSecretSyntaxKeyValues";
+import { iterateSecrets } from "./utils/iterateSecrets";
+import { WithGoogleSecretsOptions } from "./types/WithGoogleSecretsOptions";
 
 /**
  * The module "withGoogleSecrets"
@@ -141,16 +28,40 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
       filter: typeof filter === "string" ? filter : undefined,
     });
 
+    const googleSecretSyntaxKeyValues = await getGoogleSecretSyntaxKeyValues(newNextConfig);
+
     await iterateSecrets(iterable, async (secret, name) => {
+      const hasMapping = !!mapping;
       const secretName = getSecretName(name);
-      const secretMappings = mapping[secretName];
-      if (secretMappings == undefined || (filterFn && !filterFn({ name: secretName, secret }))) return;
+      const secretMappings = hasMapping ? mapping[secretName] : undefined;
+      const secretHasMappings = !!secretMappings;
+      const secretPassesFilter = !filterFn || filterFn({ name: secretName, secret });
+      const secretHasGoogleSecretSyntax = googleSecretSyntaxKeyValues.some((x) => x.secretName === secretName);
 
-      const value = await secretmanagerClient.accessSecretVersion({ name: `${name}/versions/${versions[secretName] ?? "latest"}` });
+      if (!secretPassesFilter) {
+        return;
+      }
 
-      if (isSecretPayload(value[0]?.payload?.data)) {
-        for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {
-          setConfigurationValue(newNextConfig, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
+      if (secretHasMappings) {
+        const value = await secretmanagerClient.accessSecretVersion({ name: `${name}/versions/${versions[secretName] ?? "latest"}` });
+
+        if (isSecretPayload(value[0]?.payload?.data)) {
+          for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {
+            setConfigurationValue(newNextConfig, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
+          }
+        }
+      }
+
+      if (secretHasGoogleSecretSyntax) {
+        const matchingKeyValues = googleSecretSyntaxKeyValues.filter((keyValue) => keyValue.secretName === secretName);
+        for (const keyValue of matchingKeyValues) {
+          const value = await secretmanagerClient.accessSecretVersion({
+            name: `${name}/versions/${keyValue.secretVersion}`,
+          });
+
+          if (isSecretPayload(value[0]?.payload?.data)) {
+            setConfigurationValue(newNextConfig, keyValue.path, new TextDecoder().decode(value[0]?.payload?.data));
+          }
         }
       }
     });
