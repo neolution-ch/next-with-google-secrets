@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### dependabot: \#13 Bump @grpc/grpc-js from 1.8.21 to 1.8.22
+
 ### dependabot: \#9 Bump tj-actions/changed-files from 37 to 41 in /.github/workflows
 
 ## [0.2.1] - 2024-04-23
