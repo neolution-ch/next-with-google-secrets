@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### dependabot: \#14 Bump braces from 3.0.2 to 3.0.3
+
 ### dependabot: \#9 Bump tj-actions/changed-files from 37 to 41 in /.github/workflows
 
 ## [0.2.1] - 2024-04-23
