@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### dependabot: \#17 Bump actions/checkout from 3 to 4
+
 ### dependabot: \#15 Bump micromatch from 4.0.5 to 4.0.8
 
 ### dependabot: \#16 Bump next from 13.4.12 to 14.1.1
