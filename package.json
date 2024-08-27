@@ -1,6 +1,6 @@
 {
   "name": "@neolution-ch/next-with-google-secrets",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "overrides mapped config-keys with the value from gcp secrets ",
   "homepage": "https://neolution-ch.github.io/next-with-google-secrets",
   "repository": {
@@ -11,6 +11,7 @@
   "author": "Neolution",
   "sideEffects": false,
   "exports": {
+    "./dist/*": "./dist/*",
     "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
