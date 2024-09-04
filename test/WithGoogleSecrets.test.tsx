@@ -72,11 +72,35 @@ describe("WithGoogleSecrets", () => {
         testNotOverwritten2: "testNotOverwritten2",
       },
     });
+
     expect(newConfig).toStrictEqual({
       serverRuntimeConfig: {
         testOverwritten1: "test1Value",
         testOverwritten2: "test2Value",
         testOverwritten3: "test2Value",
+        testNotOverwritten1: "testNotOverwritten1",
+      },
+      testNotOverwritten2: "testNotOverwritten2",
+    });
+  });
+
+  it("load google secrets with {GoogleSecret:SecretName:Version} syntax", async () => {
+    const newConfig = await withGoogleSecrets({
+      projectName: "testProject",
+      filter: "testFilter",
+      nextConfig: {
+        serverRuntimeConfig: {
+          testOverwritten1: "{GoogleSecret:test1:testVersion}",
+          testOverwritten2: "{GoogleSecret:test2}",
+          testNotOverwritten1: "testNotOverwritten1",
+        },
+        testNotOverwritten2: "testNotOverwritten2",
+      },
+    });
+    expect(newConfig).toStrictEqual({
+      serverRuntimeConfig: {
+        testOverwritten1: "test1Value",
+        testOverwritten2: "test2Value",
         testNotOverwritten1: "testNotOverwritten1",
       },
       testNotOverwritten2: "testNotOverwritten2",

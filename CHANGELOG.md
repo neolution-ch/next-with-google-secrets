@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+Added support for the `{GoogleSecret:SecretName:SecretVersion}` syntax. The `SecretVersion` is optional and defaults to `latest`. This allows for a more flexible way to access secrets so not all `config.{environment}.json` files need to load the same secrets.
+
 ### dependabot: \#22 Bump the github-actions group with 4 updates
 
 ### dependabot: \#15 Bump micromatch from 4.0.5 to 4.0.8
