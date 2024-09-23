@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### dependabot: \#28 Bump the npm-ecosystem group across 1 directory with 28 updates
+
 ### Added
 
 Added support for the `{GoogleSecret:SecretName:SecretVersion}` syntax. The `SecretVersion` is optional and defaults to `latest`. This allows for a more flexible way to access secrets so not all `config.{environment}.json` files need to load the same secrets.
