@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added log message to indicate from which project the secrets are loaded
+
 ## [0.3.0] - 2024-09-23
 
 ### Added

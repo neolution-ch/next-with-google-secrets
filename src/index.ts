@@ -23,6 +23,8 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
     const secretmanagerClient = new SecretManagerServiceClient();
     const projectPath = projectName.startsWith("projects/") ? projectName : `projects/${projectName}`;
 
+    console.log("WithGoogleSecrets - loading secrets from project:", projectPath);
+
     const iterable = await secretmanagerClient.listSecrets({
       parent: projectPath,
       filter: typeof filter === "string" ? filter : undefined,
