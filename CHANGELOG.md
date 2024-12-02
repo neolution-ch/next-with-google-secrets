@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### dependabot: \#40 Bump cross-spawn from 7.0.3 to 7.0.6
+
 ## [0.4.0] - 2024-09-25
 
 ### Added
