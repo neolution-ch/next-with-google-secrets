@@ -83,7 +83,6 @@
   "peerDependencies": {
     "next": ">=13.0.0",
     "react": ">=18.2.0"
-
   },
   "engines": {
     "node": ">=18"
