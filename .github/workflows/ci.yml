@@ -3,8 +3,8 @@ name: CI
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ main, "release/**" ]
-    types: [ opened, synchronize, ready_for_review ]
+    branches: [main, "release/**"]
+    types: [opened, synchronize, ready_for_review]
 
 # cancel running actions for current PR if new commits were pushed
 concurrency:
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 24.x ]
+        node-version: [24.x]
     steps:
       - uses: actions/checkout@v6
 
