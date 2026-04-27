@@ -17,5 +17,5 @@
     "allowSyntheticDefaultImports": true,
     "rootDir": "src"
   },
-  "include": ["src", "../test"]
+  "include": ["src"]
 }
