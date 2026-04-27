@@ -1,4 +1,4 @@
-﻿name: Release
+name: Release
 
 on:
   push:
@@ -71,7 +71,7 @@ jobs:
       - name: Create release branch on major version bump
         if: steps.changesets.outputs.published == 'true' && github.ref ==
           'refs/heads/main'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const published = JSON.parse('${{ steps.changesets.outputs.publishedPackages }}');
