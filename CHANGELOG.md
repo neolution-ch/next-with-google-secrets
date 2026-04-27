@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- [#43](https://github.com/neolution-ch/next-with-google-secrets/pull/43) [`b6537c6`](https://github.com/neolution-ch/next-with-google-secrets/commit/b6537c672d7860beec962b44a7e59c330ab89bcd) Thanks [@neotrow](https://github.com/neotrow)! - Update all dependencies to latest versions. Add Next.js 16 compatibility by allowing arbitrary config keys alongside typed NextConfig properties, preserving support for older Next.js features like `serverRuntimeConfig`.
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
