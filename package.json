@@ -40,15 +40,19 @@
     "start": "rollup -c -w",
     "start-all": "concurrently \"yarn start\" \"yarn start-yalc\"",
     "start-yalc": "yarn nodemon --watch dist -x \"yarn yalc push\"",
-    "test": "cross-env DEBUG_PRINT_LIMIT=100 jest"
+    "test": "cross-env DEBUG_PRINT_LIMIT=100 jest",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish"
   },
   "dependencies": {
     "@google-cloud/secret-manager": "6.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.31.0",
     "@popperjs/core": "^2.11.8",
-    "@release-it/keep-a-changelog": "^7.0.1",
     "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^1.0.0",
@@ -69,7 +73,6 @@
     "next": "^16.2.4",
     "nodemon": "^3.1.14",
     "prettier": "^3.8.3",
-    "release-it": "^20.0.1",
     "rollup": "^4.60.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-typescript2": "^0.37.0",
