@@ -14,7 +14,7 @@ export function setConfigurationValue(config: Config, path: string, value: strin
   if (pathSplit.length > 1) {
     if (typeof config[currentName] !== "object") config[currentName] = {};
     if (isConfig(config[currentName])) {
-      setConfigurationValue(config[currentName] as Config, path, value, pathSplit.filter((_, i) => i > 0).join("."));
+      setConfigurationValue(config[currentName], path, value, pathSplit.filter((_, i) => i > 0).join("."));
     } else {
       console.warn("WithGoogleSecrets - couldn't override following config:", path);
     }

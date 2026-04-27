@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { setConfigurationValue } from "./utils/setConfigurationValue";
 import { isSecretPayload } from "./utils/isSecretPayload";
