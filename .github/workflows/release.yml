@@ -1,55 +1,55 @@
 ﻿name: Release
 
 on:
-    push:
-        branches:
-            - main
-            - "release/**"
+  push:
+    branches:
+      - main
+      - "release/**"
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-    release:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-            pull-requests: write
-        steps:
-            - uses: tibdex/github-app-token@v2
-              id: generate-token
-              with:
-                  app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
-                  private_key: ${{ secrets.RELEASE_BOT_APP_PRIVATE_KEY }}
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: tibdex/github-app-token@v2
+        id: generate-token
+        with:
+          app_id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private_key: ${{ secrets.RELEASE_BOT_APP_PRIVATE_KEY }}
 
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 18
-                  cache: "yarn"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "yarn"
 
-            - name: Install dependencies
-              run: yarn --frozen-lockfile
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
 
-            - name: Set NPM Token
-              run: |
-                  echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-              env:
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN_NEOLUTION }}
+      - name: Set NPM Token
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_NEOLUTION }}
 
-            - name: Create Release Pull Request or Publish
-              uses: changesets/action@v1
-              with:
-                  version: yarn version-packages
-                  publish: yarn release
-                  title: "chore: version packages"
-                  commit: "chore: version packages"
-              env:
-                  GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN_NEOLUTION }}
+      - name: Create Release Pull Request or Publish
+        uses: changesets/action@v1
+        with:
+          version: yarn version-packages
+          publish: yarn release
+          title: "chore: version packages"
+          commit: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_NEOLUTION }}
