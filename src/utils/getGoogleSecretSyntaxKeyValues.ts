@@ -17,7 +17,7 @@ export const getGoogleSecretSyntaxKeyValues = async (config: Config) => {
       const value = config[key];
       if (typeof value === "object") {
         if (typeof config[key] === "object" && config[key] !== null) {
-          await replaceSecrets(config[key] as Config, `${path}__${key}`);
+          await replaceSecrets(config[key], `${path}__${key}`);
         }
       } else if (typeof value === "string") {
         const matches = value.matchAll(regex);

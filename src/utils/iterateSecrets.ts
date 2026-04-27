@@ -13,9 +13,9 @@ export async function iterateSecrets(
   ],
   action: (secret: protos.google.cloud.secretmanager.v1.ISecret, name: string) => Promise<void>,
 ) {
-  for await (const response of secrets) {
+  for (const response of secrets) {
     if (response == null || !Array.isArray(response)) continue;
-    for await (const secret of response) {
+    for (const secret of response) {
       if (!secret || !secret.name) continue;
       await action(secret, secret.name);
     }

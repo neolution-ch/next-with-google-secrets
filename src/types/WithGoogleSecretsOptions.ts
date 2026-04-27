@@ -2,6 +2,11 @@
 import { FilterFunction } from "./FilterFunction";
 
 /**
+ * Extends NextConfig to also allow arbitrary keys (e.g. serverRuntimeConfig in older Next.js versions).
+ */
+type ExtendedNextConfig = NextConfig & Record<string, unknown>;
+
+/**
  * Definition of possible options for the module
  */
 export type WithGoogleSecretsOptions = {
@@ -33,7 +38,7 @@ export type WithGoogleSecretsOptions = {
   /**
    * The current next config that will be extended
    */
-  nextConfig: NextConfig;
+  nextConfig: ExtendedNextConfig;
 
   /**
    * Determs if the google secrets should be loaded or not (default = true)

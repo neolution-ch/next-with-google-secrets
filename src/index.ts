@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { setConfigurationValue } from "./utils/setConfigurationValue";
 import { isSecretPayload } from "./utils/isSecretPayload";
@@ -5,6 +6,7 @@ import { getSecretName } from "./utils/getSecretName";
 import { getGoogleSecretSyntaxKeyValues } from "./utils/getGoogleSecretSyntaxKeyValues";
 import { iterateSecrets } from "./utils/iterateSecrets";
 import { WithGoogleSecretsOptions } from "./types/WithGoogleSecretsOptions";
+import { Config } from "./types/Config";
 
 /**
  * The module "withGoogleSecrets"
@@ -30,7 +32,7 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
       filter: typeof filter === "string" ? filter : undefined,
     });
 
-    const googleSecretSyntaxKeyValues = await getGoogleSecretSyntaxKeyValues(newNextConfig);
+    const googleSecretSyntaxKeyValues = await getGoogleSecretSyntaxKeyValues(newNextConfig as unknown as Config);
 
     await iterateSecrets(iterable, async (secret, name) => {
       const hasMapping = !!mapping;
@@ -49,7 +51,7 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
 
         if (isSecretPayload(value[0]?.payload?.data)) {
           for (const secretMapping of Array.isArray(secretMappings) ? secretMappings : [secretMappings]) {
-            setConfigurationValue(newNextConfig, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
+            setConfigurationValue(newNextConfig as unknown as Config, secretMapping, new TextDecoder().decode(value[0]?.payload?.data));
           }
         }
       }
@@ -62,7 +64,7 @@ const withGoogleSecrets = async (options: WithGoogleSecretsOptions) => {
           });
 
           if (isSecretPayload(value[0]?.payload?.data)) {
-            setConfigurationValue(newNextConfig, keyValue.path, new TextDecoder().decode(value[0]?.payload?.data));
+            setConfigurationValue(newNextConfig as unknown as Config, keyValue.path, new TextDecoder().decode(value[0]?.payload?.data));
           }
         }
       }
