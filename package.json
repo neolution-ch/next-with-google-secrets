@@ -46,11 +46,11 @@
     "release": "changeset publish"
   },
   "dependencies": {
-    "@google-cloud/secret-manager": "6.1.1"
+    "@google-cloud/secret-manager": "6.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
-    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@popperjs/core": "^2.11.8",
     "@rollup/plugin-commonjs": "^29.0.2",
