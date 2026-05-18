@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- [#58](https://github.com/neolution-ch/next-with-google-secrets/pull/58) [`1a67ee0`](https://github.com/neolution-ch/next-with-google-secrets/commit/1a67ee000bd99b77af8111ecb681f56d4c0258be) Thanks [@neotrow](https://github.com/neotrow)! - Changed `@google-cloud/secret-manager` dependency from an exact pin to `^6.0.0`, giving consumers flexibility to resolve any compatible 6.x version
+
 ## 0.6.0
 
 ### Minor Changes
