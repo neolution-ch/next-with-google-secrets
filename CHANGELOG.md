@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Licence information added
+
 ## 0.6.1
 
 ### Patch Changes
