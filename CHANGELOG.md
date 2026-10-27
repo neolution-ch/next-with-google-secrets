@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.2
+
+### Patch Changes
+
+- [#67](https://github.com/neolution-ch/next-with-google-secrets/pull/67) [`c7f938d`](https://github.com/neolution-ch/next-with-google-secrets/commit/c7f938d24aa40c9b2b1e4ee720063d26f46cfbfc) Thanks [@andreas-bundi](https://github.com/andreas-bundi)! - Add LICENSE file
+
 ## 0.6.1
 
 ### Patch Changes
