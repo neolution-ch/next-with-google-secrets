@@ -33,13 +33,13 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint \"**/*.{ts,tsx}\" --cache --max-warnings 0",
-    "prepack": "yarn build",
-    "prepare-pr": "yarn prettier . --write && yarn lint && yarn build && yarn test\"",
+    "prepack": "pnpm run build",
+    "prepare-pr": "pnpm exec prettier . --write && pnpm run lint && pnpm run build && pnpm run test",
     "prettier-check": "prettier --check .",
     "prettier-write": "prettier --write .",
     "start": "rollup -c -w",
-    "start-all": "concurrently \"yarn start\" \"yarn start-yalc\"",
-    "start-yalc": "yarn nodemon --watch dist -x \"yarn yalc push\"",
+    "start-all": "concurrently \"pnpm run start\" \"pnpm run start-yalc\"",
+    "start-yalc": "nodemon --watch dist -x \"yalc push\"",
     "test": "cross-env DEBUG_PRINT_LIMIT=100 jest",
     "changeset": "changeset",
     "version-packages": "changeset version",
@@ -50,8 +50,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
-    "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.31.0",
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3",
     "@popperjs/core": "^2.11.8",
     "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-node-resolve": "^16.0.3",
@@ -94,5 +94,5 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@11.22.0"
 }

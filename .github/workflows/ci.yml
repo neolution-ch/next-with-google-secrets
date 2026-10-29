@@ -25,14 +25,17 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: "yarn"
 
-      - run: yarn --frozen-lockfile
+      # Activates the pnpm version pinned in package.json's "packageManager".
+      - name: Enable Corepack
+        run: corepack enable
+
+      - run: pnpm install --frozen-lockfile
 
       - name: Check for changesets
         if: github.head_ref != 'changeset-release/main' && !startsWith(github.head_ref,
           'changeset-release/release/')
-        run: npx changeset status --since=origin/${{ github.base_ref }}
+        run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
 
   ci:
     if: github.event.pull_request.draft == false
@@ -47,10 +50,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
 
-      - run: yarn --frozen-lockfile
-      - run: yarn prettier-check
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn jest
+      # Activates the pnpm version pinned in package.json's "packageManager".
+      - name: Enable Corepack
+        run: corepack enable
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run prettier-check
+      - run: pnpm run lint
+      - run: pnpm run build
+      - run: pnpm exec jest

@@ -34,16 +34,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: "yarn"
+          registry-url: "https://registry.npmjs.org"
+
+      # Activates the pnpm version pinned in package.json's "packageManager".
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
-
-      - name: Set NPM Token
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN_NEOLUTION }}
+        run: pnpm install --frozen-lockfile
 
       - name: Determine publish config
         id: publish-config
@@ -58,15 +56,18 @@ jobs:
 
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: yarn version-packages
-          publish: npx changeset publish ${{ steps.publish-config.outputs.tag }}
-          title: "chore: version packages"
-          commit: "chore: version packages"
+          # The App token must be passed through this input: the action reads only
+          # the input, and the resulting version PR and release commit are attributed
+          # to the App so that they re-trigger CI.
+          github-token: ${{ steps.app-token.outputs.token }}
+          version-script: pnpm run version-packages
+          publish-script: pnpm exec changeset publish ${{ steps.publish-config.outputs.tag }}
+          pr-title: "chore: version packages"
+          commit-message: "chore: version packages"
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN_NEOLUTION }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_NEOLUTION }}
 
       - name: Create release branch on major version bump
         if: steps.changesets.outputs.published == 'true' && github.ref ==
@@ -74,7 +75,7 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const published = JSON.parse('${{ steps.changesets.outputs.publishedPackages }}');
+            const published = JSON.parse('${{ steps.changesets.outputs.published-packages }}');
             if (!published.length) return;
 
             const newVersion = published[0].version;

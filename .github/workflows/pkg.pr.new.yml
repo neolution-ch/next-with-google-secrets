@@ -19,7 +19,11 @@ jobs:
         with:
           node-version: 24
 
-      - run: yarn --frozen-lockfile
+      # Activates the pnpm version pinned in package.json's "packageManager".
+      - name: Enable Corepack
+        run: corepack enable
+
+      - run: pnpm install --frozen-lockfile
 
       # append the git commit to the package.json version.
       # We do this because some cache mechanisms (like nextjs) don't work well with the same version and ignore the changes
@@ -27,4 +31,4 @@ jobs:
       - run: jq '.version = .version + "-" + env.GITHUB_SHA' package.json >
           package.json.tmp && mv package.json.tmp package.json
 
-      - run: npx pkg-pr-new publish
+      - run: pnpm dlx pkg-pr-new publish --pnpm
