@@ -25,13 +25,13 @@ jobs:
           private-key: ${{ secrets.CHANGESETS_BOT_PRIVATE_KEY }}
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
@@ -40,13 +40,14 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Determine publish config
         id: publish-config
         run: |
           if [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+            # Extract major version from branch name (e.g., release/v1.x → release-v1)
             BRANCH="${{ github.ref_name }}"
             TAG=$(echo "$BRANCH" | sed -n 's|release/v\([0-9]*\)\..*|release-v\1|p')
             echo "tag=--tag $TAG" >> "$GITHUB_OUTPUT"
@@ -62,7 +63,6 @@ jobs:
           # the input, and the resulting version PR and release commit are attributed
           # to the App so that they re-trigger CI.
           github-token: ${{ steps.app-token.outputs.token }}
-          version-script: pnpm run version-packages
           publish-script: pnpm exec changeset publish ${{ steps.publish-config.outputs.tag }}
           pr-title: "chore: version packages"
           commit-message: "chore: version packages"
